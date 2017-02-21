@@ -1,3 +1,0 @@
-"""
-[Outsider program maybe?]
-"""
