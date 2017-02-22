@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.preprocessing import OneHotEncoder
 
 
-def get_datatarget(scores_file, delimiter, target_size, conv_type):
+def get_datatarget(scores_file, delimiter, target_size, conv_type, class_):
     """
     Reads a complete file with pandas, splits to data and target and makes wished preprocessing of the target variables.
     :param scores_file: The file with data and targets for neural network learning.
@@ -20,7 +20,7 @@ def get_datatarget(scores_file, delimiter, target_size, conv_type):
     """ get data """
     df = pd.read_csv(scores_file, sep=delimiter)
 
-    input_matrix = df.select_dtypes(include=['float64']).as_matrix()
+    input_matrix = df.select_dtypes(include=['float64', 'int']).as_matrix()
 
     """ split data and target """
     data = input_matrix[:, :-target_size]
@@ -28,13 +28,17 @@ def get_datatarget(scores_file, delimiter, target_size, conv_type):
 
     target = input_matrix[:, -target_size:]
     target_class = 0
+    target_names = list(df)[-target_size:]
 
     if conv_type == "class":
-        target_class = classification(target, 10, 90)
-        target = one_hot_encoder_target(target_class, 3)
+        if class_ != 2:
+            target_class = classification(target, 10, 90)
+        else:
+            target_class = target
+        target = one_hot_encoder_target(target_class, class_)
 
     ids = df['ID'].as_matrix()
-    return data, target, target_class, ids
+    return data, target, target_class, ids, target_names
 
 
 def classification(target, down_per, up_per):

@@ -24,10 +24,10 @@ def learn_and_score(datatarget_file, delimiter, target_size):
     """
 
     """ Get data and target tables. """
-    data, target, target_class, ids = data_target.get_datatarget(datatarget_file, delimiter, target_size, "reg")
+    data, target, target_class, ids, target_names = data_target.get_datatarget(datatarget_file, delimiter, target_size, "reg")
 
     """ Neural network architecture initialisation. """
-    n_hidden_n = int(max(data.shape[1], target.shape[1]) * 5 / 3)
+    n_hidden_n = int(max(data.shape[1], target.shape[1]) * 2 / 3)
 
     net = CNNLearner.CNNLearner(target_size, n_hidden_n, conv_type="reg")
 
@@ -40,8 +40,10 @@ def learn_and_score(datatarget_file, delimiter, target_size):
     skf = KFold(target.shape[0], n_folds=10, shuffle=True)
     idx = 0
     for train_index, test_index in skf:
-        trX, teX = data[train_index], data[test_index]
-        trY, teY = target[train_index], target[test_index]
+        trX, teX = data, data  # OVERFITTING!!!
+        # trX, teX = data[train_index], data[test_index]
+        trY, teY = target, target  # OVERFITTING!!!
+        # trY, teY = target[train_index], target[test_index]
 
         print(trX.shape, trY.shape, teX.shape, teY.shape)
         """ Learning and predicting """
@@ -54,17 +56,23 @@ def learn_and_score(datatarget_file, delimiter, target_size):
         print(prY)
         print(teY)
 
-        nn_scores.append(nn_score)
+        nn_scores.append(np.mean(nn_score))
 
         """ Storing results... """
         probs[idx:idx + len(teY), :target_size] = teY
         probs[idx:idx + len(teY), target_size:] = prY
-        ids_end[idx:idx+len(teY), 0] = ids[test_index].flatten()
+        # ids_end[idx:idx+len(teY), 0] = ids[test_index].flatten()
+        ids_end[idx:idx+len(teY), 0] = ids.flatten()  # OVERFITTING!!!
         idx += len(teY)
-
-    rho, p_value = spearmanr(probs[:, -1], probs[:, -2])
+        break   # OVERFITTING!!!
+    rhos = []
+    p_values = []
+    for i in range(target_size):
+        rho, p_value = spearmanr(probs[:, i], probs[:, i+target_size])
+        rhos.append(rho)
+        p_values.append(p_value)
     print("Accuracy score of cnn:", np.mean(nn_scores))
-    return rho, p_value, np.around(probs, decimals=2), ids_end
+    return rhos, p_values, np.around(probs, decimals=2), ids_end, target_names
 
 
 def rmse_score(y_predicted, y_true):
@@ -105,7 +113,7 @@ def main():
     nn_scores = []
     col_names = []
     corr_scores = []
-
+    target_names = []
     datatarget_list = os.listdir(datatarget_dir)
 
     for row in datatarget_list:
@@ -113,17 +121,17 @@ def main():
         col_names.append(row[:-4])
         print(datatarget_file)
 
-        rhos, p_values, probs, ids = learn_and_score(datatarget_file, delimiter, target_size)
+        rhos, p_values, probs, ids, target_names = learn_and_score(datatarget_file, delimiter, target_size)
         corr_scores.append(rhos)
         corr_scores.append(p_values)
         nn_scores.append(np.hstack([probs, ids]))
 
-    nn_one_file = output_dir + "/spearman_" + "_" + name + "_" + time.strftime("%d_%m_%Y") + ".csv"
-    df = pd.DataFrame(data=np.array(corr_scores), index=(['rho', 'p-value'] * len(col_names)))
+    nn_one_file = output_dir + "/spearman_" + name + "_" + time.strftime("%d_%m_%Y") + ".csv"
+    df = pd.DataFrame(data=np.array(corr_scores), index=(['rho', 'p-value'] * len(col_names)), columns=target_names)
     df = df.round(decimals=4)
     df.to_csv(nn_one_file, sep=delimiter)
 
-    nn_probs_file = output_dir + "/prob" + "_" + name + "_" + time.strftime("%d_%m_%Y") + ".csv"
+    nn_probs_file = output_dir + "/prob_" + name + "_" + time.strftime("%d_%m_%Y") + ".csv"
     print(nn_probs_file)
     df = pd.DataFrame(data=np.vstack(nn_scores))
     df = df.round(decimals=2)

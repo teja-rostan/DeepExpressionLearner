@@ -24,14 +24,15 @@ def learn_and_score(datatarget_file, delimiter, target_size):
     in learning and testing.
     """
 
+    class_ = 2
     """ Get data and target tables. """
-    data, target, target_class, ids = data_target.get_datatarget(datatarget_file, delimiter, target_size, "class")
+    data, target, target_class, ids, target_names = data_target.get_datatarget(datatarget_file, delimiter, target_size, "class", class_)
 
     """ Neural network architecture initialisation. """
-    class_size = 3 * target_size
-    n_hidden_n = int(max(data.shape[1], target.shape[1]) * 5 / 3)
+    class_size = class_ * target_size
+    n_hidden_n = int(max(data.shape[1], target.shape[1]) * 2 / 3)
 
-    net = CNNLearner.CNNLearner(class_size, n_hidden_n)
+    net = CNNLearner.CNNLearner(class_size, n_hidden_n, "class")
 
     nn_scores = []
 
@@ -50,28 +51,36 @@ def learn_and_score(datatarget_file, delimiter, target_size):
         net.fit(trX, trY)
         prY = net.predict(teX)
 
-        maj = majority(trY, teY)
-        nn_score, true_p, pred_p = score_ca_and_prob(prY, teY)
+        maj = majority(trY, teY, class_)
+        nn_score, true_p, pred_p = score_ca_and_prob(prY, teY, class_)
         print("Accuracy score of majority:", np.mean(maj), "|Accuracy score of cnn:", np.mean(nn_score))
-        print(pred_p)
-        print(true_p)
+        print(pred_p.shape)
+        print(true_p.shape)
 
         nn_scores.append(nn_score)
 
         """ Storing results... """
         probs[idx:idx + len(teY), :target_size] = true_p
         probs[idx:idx + len(teY), target_size:] = pred_p
-        ids_end[idx:idx+len(teY), 0] = ids[test_index].flatten()
+        ids_end[idx:idx + len(teY), 0] = ids[test_index].flatten()
         idx += len(teY)
 
-    rho, p_value = spearmanr(probs[:, -1], probs[:, -2])
+    rhos = []
+    p_values = []
+    for i in range(target_size):
+        print(probs[:, i], probs[:, i + target_size])
+        print(np.isnan(probs[:, i]).any(), np.isnan(probs[:, i+target_size]).any())
+        rho, p_value = spearmanr(probs[:, i], probs[:, i + target_size])
+        rhos.append(rho)
+        p_values.append(p_value)
     print("Accuracy score of cnn:", np.mean(nn_scores))
-    return rho, p_value, np.around(probs, decimals=2), ids_end
+    print(rhos)
+    return rhos, p_values, np.around(probs, decimals=2), ids_end, target_names
 
 
-def majority(tr_y, te_y):
+def majority(tr_y, te_y, k):
     """ Classification accuracy of majority classifier. """
-    k = 3
+    # k = 3
     mc = []
     for i in range(int(tr_y.shape[1] / k)):
         col_train = tr_y[:, i * k:i * k + k]
@@ -87,12 +96,12 @@ def majority(tr_y, te_y):
     return mc
 
 
-def score_ca_and_prob(y_predicted, y_true):
+def score_ca_and_prob(y_predicted, y_true, k):
     """ Multi-target scoring with classification accuracy. """
     true_prob = []
     pred_prob = []
     all_ca = []
-    k = 3
+    # k = 3
     for i in range(int(y_true.shape[1] / k)):
         col_true = y_true[:, i * k:i * k + k]
         col_predicted = y_predicted[:, i * k:i * k + k]
@@ -126,25 +135,28 @@ def main():
     nn_scores = []
     col_names = []
     corr_scores = []
+    target_names = []
 
     datatarget_list = os.listdir(datatarget_dir)
+    print(datatarget_list)
 
     for row in datatarget_list:
         datatarget_file = datatarget_dir + row
-        col_names.append(row[:-4])
-        print(datatarget_file)
+        if os.path.isfile(datatarget_file):
+            col_names.append(row[:-4])
+            print(datatarget_file)
 
-        rhos, p_values, probs, ids = learn_and_score(datatarget_file, delimiter, target_size)
-        corr_scores.append(rhos)
-        corr_scores.append(p_values)
-        nn_scores.append(np.hstack([probs, ids]))
+            rhos, p_values, probs, ids, target_names = learn_and_score(datatarget_file, delimiter, target_size)
+            corr_scores.append(rhos)
+            corr_scores.append(p_values)
+            nn_scores.append(np.hstack([probs, ids]))
 
-    nn_one_file = output_dir + "/spearman_" + "_" + name + "_" + time.strftime("%d_%m_%Y") + ".csv"
-    df = pd.DataFrame(data=np.array(corr_scores), index=(['rho', 'p-value'] * len(col_names)))
+    nn_one_file = output_dir + "/spearman_" + name + "_" + time.strftime("%d_%m_%Y") + ".csv"
+    df = pd.DataFrame(data=np.array(corr_scores), index=(['rho', 'p-value'] * len(col_names)), columns=target_names)
     df = df.round(decimals=4)
     df.to_csv(nn_one_file, sep=delimiter)
 
-    nn_probs_file = output_dir + "/prob" + "_" + name + "_" + time.strftime("%d_%m_%Y") + ".csv"
+    nn_probs_file = output_dir + "/prob_" + name + "_" + time.strftime("%d_%m_%Y") + ".csv"
     print(nn_probs_file)
     df = pd.DataFrame(data=np.vstack(nn_scores))
     df = df.round(decimals=2)

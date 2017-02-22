@@ -14,16 +14,15 @@ class CNNLearner:
         Initialization of Classification neural network.
         :param attribute_size: Number of input attributes for neural network.
         :param class_size: Number of output classes for neural network.
-        :param n_hidden_layers: Number of hidden layers in neural network architecture.
         :param n_hidden_neurons: Number of hidden neurons in every hidden layer in neural network architecture.
 
         """
         self.class_size = class_size
         self.n_hidden_neurons = n_hidden_neurons
 
-        self.n_kernels = 512
+        self.n_kernels = 32
         self.k = 6
-        self.final_image_size = 147456  # manual fast fix
+        self.final_image_size = 73728  # manual fast fix
 
         X = T.ftensor4()
         Y = T.fmatrix()
@@ -39,7 +38,7 @@ class CNNLearner:
             self.noise_py_x = nnet.conv_model_reg(X, self.w_h, self.w_h2, self.w_h3, self.w_h4, self.w_h5, self.w_o, 0.03, 0.1)
             self.py_x = nnet.conv_model_reg(X, self.w_h, self.w_h2, self.w_h3, self.w_h4, self.w_h5, self.w_o, 0., 0.)
             self.cost = nnet.rmse(self.noise_py_x, Y)
-        else:
+        elif conv_type == "class":
             self.noise_py_x = nnet.conv_model(X, self.w_h, self.w_h2, self.w_h3, self.w_h4, self.w_h5, self.w_o, 0.03, 0.1)
             self.py_x = nnet.conv_model(X, self.w_h, self.w_h2, self.w_h3, self.w_h4, self.w_h5, self.w_o, 0., 0.)
 
@@ -74,7 +73,7 @@ class CNNLearner:
 
         """ Randomize weights after training and predicting for new round """
         self.w_h.set_value(nnet.rand_weights((self.n_kernels, 1, 1, self.k * 4)))
-        self.w_h2.set_value(nnet.rand_weights((self.n_kernels * 2, self.n_kernels, 1, self.k )))
+        self.w_h2.set_value(nnet.rand_weights((self.n_kernels * 2, self.n_kernels, 1, self.k)))
         self.w_h3.set_value(nnet.rand_weights((self.n_kernels * 4, self.n_kernels * 2, 1, self.k)))
         self.w_h4.set_value(nnet.rand_weights((self.final_image_size, self.n_hidden_neurons)))
         self.w_h5.set_value(nnet.rand_weights((self.n_hidden_neurons, self.n_hidden_neurons)))

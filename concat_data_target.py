@@ -4,6 +4,10 @@ get sequences and their ids (convert from DDB to DDB_G where possible)
 run seq2num
 get expressions
 join sequences with their expressions
+/Users/tejarostan/deepExpressionLearner/promoterSequences/promoter_sequences.fasta
+/Users/tejarostan/deepExpressionLearner/bind_exps/
+/Users/tejarostan/deepExpressionLearner/datatarget/
+\t
 """
 import time
 import sys
@@ -13,7 +17,7 @@ from Bio import SeqIO
 import os
 
 
-def get_seq_and_id(input_fasta_sequences, max_seq_len):
+def get_seq_and_id(input_fasta_sequences, max_seq_len, delimiter):
     """
     Extracts raw sequence strings from fasta input file and their ids to separate dataframes.
     :param input_fasta_sequences:
@@ -73,13 +77,12 @@ def seq2one_hot(data_sequences, data_record_ids, max_len):
     :param data_sequences: pandas dataframe of raw sequences
     :return: pandas dataframe of onehot encoded sequences
     """
-
+    print(data_sequences)
     data_sequences.record_sequence = data_sequences.record_sequence.str.replace('A', '0')
     data_sequences.record_sequence = data_sequences.record_sequence.str.replace('C', '1')
     data_sequences.record_sequence = data_sequences.record_sequence.str.replace('G', '2')
     data_sequences.record_sequence = data_sequences.record_sequence.str.replace('T', '3')
-    # data_sequences.record_sequence = data_sequences.record_sequence.str.replace('N', '0')
-    # data_sequences.record_sequence = data_sequences.record_sequence.str.pad(max_len, side='left', fillchar='0')
+
     data = data_sequences.record_sequence.as_matrix()
     new_data = np.zeros((len(data_sequences), max_len * 4))
     bad = []
@@ -101,11 +104,16 @@ def sort_data_and_get_expressions(input_expressions, delimiter, data_record_ids,
     """ The program matches and concatenates sequences with their expressions.
     Afterward, the program writes final dataframes in datatarget csv files. """
 
-    bind_exps = os.listdir(input_expressions)
+    if os.path.isfile(input_expressions):
+        bind_exps = ["", ""]
+    else:
+        bind_exps = os.listdir(input_expressions)
 
     for j, bind_exp in enumerate(bind_exps[1:]):
         print(bind_exp)
         df = pd.read_csv(input_expressions + bind_exp, sep=delimiter)
+        print(df.columns, exps_size)
+
         exps = df[df.columns[-exps_size:]]
         col_names = list(np.arange(data_sequences.shape[1]).astype(np.str)) + list(exps)
         exps_m = exps.as_matrix()
@@ -129,24 +137,24 @@ def sort_data_and_get_expressions(input_expressions, delimiter, data_record_ids,
 def main():
     start = time.time()
     arguments = sys.argv[1:]
-    max_seq_len = 600  # if shorter, remove.
+    max_seq_len = 20  # if shorter, remove.
     map_txt = "DDB2DDB_G/DDB-GeneID-UniProt.txt"
     conv_type = "0"
-    exps_size = 14
     times = ['0h', '10h', '12h', '14h', '16h', '18h', '20h', '22h', '24h', '2h', '4h', '6h', '8h']
 
-    if len(arguments) < 4:
+    if len(arguments) < 5:
         print("Not enough arguments stated! Usage: \n"
-              "python concat_data_target.py <input_fasta_sequences> <input_expressions> <output_data_target_file> "
+              "python concat_data_target.py <input_fasta_sequences> <input_expressions> <output_data_target_file> <expression_size>"
               "<delimiter>.")
         return
 
     input_fasta_sequences = arguments[0]
     input_expressions = arguments[1]
     output_data_target_file = arguments[2]
-    delimiter = arguments[3]
+    exps_size = int(arguments[3])
+    delimiter = arguments[4]
 
-    data_record_ids, data_sequences = get_seq_and_id(input_fasta_sequences, max_seq_len)
+    data_record_ids, data_sequences = get_seq_and_id(input_fasta_sequences, max_seq_len, delimiter)
     data_record_ids, names = convert_ids(data_record_ids, map_txt, conv_type)
 
     data_sequences, data_record_ids = seq2one_hot(data_sequences, data_record_ids, max_seq_len)
