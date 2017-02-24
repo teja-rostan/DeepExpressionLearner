@@ -80,15 +80,88 @@ def generate_data(N, L, p, motif1, mean1, var1, motif2, mean2, var2, priors, see
     y = np.array(y)
     return data, y
 
-data, y = generate_data(N=5000, L=200, p=0.2, motif1="GGGGGG", mean1=0, var1=1, motif2="AAAAAA", mean2=0.5, var2=2, priors={"A": 0.25, "C": 0.25, "G": 0.25, "T":0.25})
-f = open('data.csv', 'w')
-for i, d in enumerate(data):
-    f.write(">DDB_G" + str(i) + '\n')  # python will convert \n to os.linesep
-    f.write(d + '\n')
-    f.write('\n')
-f.close()
-f = open('target.csv', 'w')
-f.write('ID, val\n')
-for i, d in enumerate(y):
-    f.write("DDB_G" + str(i) + "," + str(d) + '\n')
-f.close()
+
+def generate_signal_data(M, N, L, p, motif1, mean1, var1, motif2, mean2, var2, priors, seed=None):
+    """
+    Generate multi-output (vector-output) data.
+
+    :param M:
+        Signal length.
+
+    :param N: See generate_data.
+    :param L: See generate_data.
+    :param p: See generate_data.
+    :param motif1: See generate_data.
+    :param mean1: See generate_data.
+    :param var1: See generate_data.
+    :param motif2: See generate_data.
+    :param mean2: See generate_data.
+    :param var2: See generate_data.
+    :param priors: See generate_data.
+    :param seed: See generate_data.
+    :return:
+        data
+            List of sequences.
+        Y
+            Multi-output regression matrix.
+        cls
+            Class from which the line was drawn {-1, 0, 1}.
+    """
+    Y = np.zeros((N, M))
+    data, r = generate_data(N, L, p, motif1, mean1, var1, motif2, mean2, var2, priors, seed)
+    cls = np.zeros((len(r), ))  # Line coefficients
+    cls[r < p] = -1
+    cls[r > 1 - p] = 1
+
+    # Generate random lines as signals
+    for i in range(N):
+        k = cls[i] * np.random.rand()
+        n = np.random.rand() * 0.2
+        noise = np.random.rand(M).ravel() * 0.1
+        Y[i, :] = k * np.linspace(-1, 1, M) + n + noise
+
+    return data, Y, cls
+
+
+
+
+
+
+
+
+if __name__ == "__main__":
+
+    data, y = generate_data(N=5000, L=200, p=0.2, motif1="GGGGGG", mean1=0, var1=1, motif2="AAAAAA", mean2=0.5,
+                            var2=2, priors={"A": 0.25, "C": 0.25, "G": 0.25, "T":0.25})
+    f = open('data.csv', 'w')
+    for i, d in enumerate(data):
+        f.write(">DDB_G" + str(i) + '\n')  # python will convert \n to os.linesep
+        f.write(d + '\n')
+        f.write('\n')
+    f.close()
+    f = open('target.csv', 'w')
+    f.write('ID, val\n')
+    for i, d in enumerate(y):
+        f.write("DDB_G" + str(i) + "," + str(d) + '\n')
+    f.close()
+
+    # Just for show; delete plotting
+    import matplotlib.pyplot as plt
+
+    motif1 = "GGGGGG"
+    motif2 = "AAAAAA"
+    data, Y, cls = generate_signal_data(M=14, N=30, L=200, p=0.2, motif1=motif1, mean1=0, var1=1, motif2=motif2, mean2=0.5,
+                            var2=2, priors={"A": 0.25, "C": 0.25, "G": 0.25, "T": 0.25})
+
+    plt.figure()
+    for y, c in zip(Y, cls):
+        color = {-1: "red", 0: "gray", 1: "green"}[c]
+        plt.plot(y, color=color)
+    plt.text(12, 0.5, motif1, color="green")
+    plt.text(12, -0.5, motif2, color="red")
+    plt.xlabel("Time point")
+    plt.ylabel("Value")
+    plt.savefig("random_signals.png", bbox_inches="tight")
+    plt.show()
+
+
