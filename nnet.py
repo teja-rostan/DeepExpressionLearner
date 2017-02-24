@@ -1,5 +1,5 @@
 """
-[Private program]
+Theano functions for neural network models.
 """
 import theano
 from theano import tensor as T
@@ -13,8 +13,10 @@ import numpy as np
 
 srng = RandomStreams()
 
+
 def rmse(noise_py_x, Y):
     return T.sqrt(T.mean(T.sqr(Y - noise_py_x)))
+
 
 def rectify(X):
     return T.maximum(X, 0.)
@@ -33,6 +35,51 @@ def softmax(X):
     return e_x / e_x.sum(axis=1).dimshuffle(0, 'x')
 
 
+def model2(X, w_h, w_h2, w_o, p_drop_input, p_drop_hidden):
+    X = dropout(X, p_drop_input)
+    h = rectify(T.dot(X, w_h))
+
+    h = dropout(h, p_drop_hidden)
+    h2 = rectify(T.dot(h, w_h2))
+
+    h2 = dropout(h2, p_drop_hidden)
+    py_x = softmax(T.dot(h2, w_o))
+    return py_x
+
+
+def model3(X, w_h, w_h2, w_h3, w_o, p_drop_input, p_drop_hidden):
+    X = dropout(X, p_drop_input)
+    h = rectify(T.dot(X, w_h))
+
+    h = dropout(h, p_drop_hidden)
+    h2 = rectify(T.dot(h, w_h2))
+
+    h2 = dropout(h2, p_drop_hidden)
+    h3 = rectify(T.dot(h2, w_h3))
+
+    h3 = dropout(h3, p_drop_hidden)
+    py_x = softmax(T.dot(h3, w_o))
+    return py_x
+
+
+def model4(X, w_h, w_h2, w_h3, w_h4, w_o, p_drop_input, p_drop_hidden):
+    X = dropout(X, p_drop_input)
+    h = rectify(T.dot(X, w_h))
+
+    h = dropout(h, p_drop_hidden)
+    h2 = rectify(T.dot(h, w_h2))
+
+    h2 = dropout(h2, p_drop_hidden)
+    h3 = rectify(T.dot(h2, w_h3))
+
+    h3 = dropout(h3, p_drop_hidden)
+    h4 = rectify(T.dot(h3, w_h4))
+
+    h4 = dropout(h4, p_drop_hidden)
+    py_x = softmax(T.dot(h4, w_o))
+    return py_x
+
+
 def conv_model(X, w_h, w_h2, w_h3, w_h4, w_h5, w_o, p_drop_conv, p_drop_hidden):
     h1 = rectify(conv2d(X, w_h, border_mode='full', subsample=(1, 4)))
     h1 = max_pool_2d(h1, (1, 2), ignore_border=True)
@@ -47,6 +94,39 @@ def conv_model(X, w_h, w_h2, w_h3, w_h4, w_h5, w_o, p_drop_conv, p_drop_hidden):
     h3 = T.flatten(h3, outdim=2)
 
     h3 = dropout(h3, p_drop_conv)
+    h4 = rectify(T.dot(h3, w_h4))
+
+    h4 = dropout(h4, p_drop_conv)
+    h5 = rectify(T.dot(h4, w_h5))
+
+    h5 = dropout(h5, p_drop_hidden)
+    pyx = softmax(T.dot(h5, w_o))
+    return pyx
+
+
+def conv_model2(X, w_h, w_h2, w_h4, w_o, p_drop_conv, p_drop_hidden):
+    h1 = rectify(conv2d(X, w_h, border_mode='full', subsample=(1, 4)))
+    h1 = max_pool_2d(h1, (1, 2), ignore_border=True)
+
+    h1 = dropout(h1, p_drop_conv)
+    h2 = rectify(conv2d(h1, w_h2))
+    h2 = max_pool_2d(h2, (1, 2), ignore_border=True)
+    h2 = T.flatten(h2, outdim=2)
+
+    h2 = dropout(h2, p_drop_conv)
+    h3 = rectify(T.dot(h2, w_h4))
+
+    h4 = dropout(h3, p_drop_hidden)
+    pyx = softmax(T.dot(h4, w_o))
+    return pyx
+
+
+def conv_model3(X, w_h, w_h4, w_h5, w_o, p_drop_conv, p_drop_hidden):
+    h1 = rectify(conv2d(X, w_h, border_mode='full', subsample=(1, 4)))
+    h1 = max_pool_2d(h1, (1, 2), ignore_border=True)
+    h2 = T.flatten(h1, outdim=2)
+
+    h3 = dropout(h2, p_drop_conv)
     h4 = rectify(T.dot(h3, w_h4))
 
     h4 = dropout(h4, p_drop_conv)
@@ -79,6 +159,33 @@ def conv_model_reg(X, w_h, w_h2, w_h3, w_h4, w_h5, w_o, p_drop_conv, p_drop_hidd
     h5 = dropout(h5, p_drop_hidden)
     pyx = T.dot(h5, w_o)
     return pyx
+
+
+def model_reg(X, w_h, w_h2, w_o, p_drop_input, p_drop_hidden):
+    X = dropout(X, p_drop_input)
+    h = rectify(T.dot(X, w_h))
+
+    h = dropout(h, p_drop_hidden)
+    h2 = rectify(T.dot(h, w_h2))
+
+    h2 = dropout(h2, p_drop_hidden)
+    py_x = (T.dot(h2, w_o))
+    return py_x
+
+
+def model_reg3(X, w_h, w_h2, w_h3, w_o, p_drop_input, p_drop_hidden):
+    X = dropout(X, p_drop_input)
+    h = rectify(T.dot(X, w_h))
+
+    h = dropout(h, p_drop_hidden)
+    h2 = rectify(T.dot(h, w_h2))
+
+    h2 = dropout(h2, p_drop_hidden)
+    h3 = rectify(T.dot(h2, w_h3))
+
+    h3 = dropout(h3, p_drop_hidden)
+    py_x = (T.dot(h3, w_o))
+    return py_x
 
 
 def floatX(X):

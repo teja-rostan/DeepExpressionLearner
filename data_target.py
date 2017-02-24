@@ -1,5 +1,5 @@
 """
-[Outsider program maybe?]
+A program for data and target retrieving in right format for class_learning.py or a reg_learning.py
 """
 import pandas as pd
 import numpy as np
@@ -24,17 +24,15 @@ def get_datatarget(scores_file, delimiter, target_size, conv_type, class_):
 
     """ split data and target """
     data = input_matrix[:, :-target_size]
-    data = data.reshape((-1, 1, 1, data.shape[1]))
+    # data = data.reshape((-1, 1, 1, data.shape[1]))  #  IF CONVOLUTION!!!
 
     target = input_matrix[:, -target_size:]
     target_class = 0
     target_names = list(df)[-target_size:]
 
     if conv_type == "class":
-        if class_ != 2:
-            target_class = classification(target, 10, 90)
-        else:
-            target_class = target
+        # target_class = classification(target, 0.2, 0.8)
+        target_class = classification(target, 0.1, 0.9)  # 10th percentile, decided over analysis on Orange
         target = one_hot_encoder_target(target_class, class_)
 
     ids = df['ID'].as_matrix()
@@ -52,11 +50,18 @@ def classification(target, down_per, up_per):
 
     new_target = np.zeros(target.shape)
     for i, expression in enumerate(target.T):
-        down_10 = np.percentile(expression, down_per)  # 10th percentile, decides over analysis on Orange
-        up_10 = np.percentile(expression, up_per)  # 10th percentile, decides over analysis on Orange
         new_expression = np.ones(expression.shape)
+
+        # IF USING PERCENTIL FOR CLASSIFICATION
+        down_10 = np.percentile(expression, down_per * 100)
+        up_10 = np.percentile(expression, up_per * 100)
         new_expression -= (expression <= down_10)
         new_expression += (expression >= up_10)
+
+        # IF USING THRESHOLD [0, 1] FOR CLASSIFICATION
+        # new_expression -= (expression < down_per)
+        # new_expression += (expression > up_per)
+
         new_target[:, i] = new_expression
     return new_target
 

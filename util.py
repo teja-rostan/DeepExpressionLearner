@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 
 
 def generate_sequence(priors, L):
@@ -39,7 +38,7 @@ def insert_motif(seq, motif, mean=0, var=3):
     return (seq[:j] + motif + seq[j+len(motif):])[:len(seq)]
 
 
-def generate_data(N, L, p, motif, mean, var, priors, seed=None):
+def generate_data(N, L, p, motif1, mean1, var1, motif2, mean2, var2, priors, seed=None):
     """
     Generate random sequences with motif.
 
@@ -71,23 +70,25 @@ def generate_data(N, L, p, motif, mean, var, priors, seed=None):
     data, y = list(), list()
     for n in range(N):
         seq = generate_sequence(priors, L)
-        c = int(np.random.rand() < p)
-        if c:
-            seq = insert_motif(seq, motif, mean=mean, var=var)
+        r = np.random.rand()
+        if r < p:
+            seq = insert_motif(seq, motif1, mean=mean1, var=var1)
+        if r > 1 - p:
+            seq = insert_motif(seq, motif2, mean=mean2, var=var2)
         data.append(seq)
-        y.append(c)
+        y.append(r)
     y = np.array(y)
     return data, y
 
-data, y = generate_data(N=200, L=40, p=0.5, motif="GGGG", mean=0, var=1, priors={"A": 0.25, "C": 0.25, "G": 0.25, "T":0.25})
+data, y = generate_data(N=5000, L=200, p=0.2, motif1="GGGGGG", mean1=0, var1=1, motif2="AAAAAA", mean2=0.5, var2=2, priors={"A": 0.25, "C": 0.25, "G": 0.25, "T":0.25})
 f = open('data.csv', 'w')
 for i, d in enumerate(data):
     f.write(">DDB_G" + str(i) + '\n')  # python will convert \n to os.linesep
-    f.write(d + '\n')  # python will convert \n to os.linesep
-    f.write('\n')  # python will convert \n to os.linesep
+    f.write(d + '\n')
+    f.write('\n')
 f.close()
 f = open('target.csv', 'w')
-f.write('ID, val\n')  # python will convert \n to os.linesep
+f.write('ID, val\n')
 for i, d in enumerate(y):
-    f.write("DDB_G" + str(i) + "," + str(d) + '\n')  # python will convert \n to os.linesep
+    f.write("DDB_G" + str(i) + "," + str(d) + '\n')
 f.close()

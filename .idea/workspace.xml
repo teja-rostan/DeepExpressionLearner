@@ -2,15 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="aea1a0b6-bb19-46c9-a211-294576b7671a" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/spearman.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/util.py" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/seq2num.py" afterPath="" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/NNLearner.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/NNLearner_reg.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/CNNLearner.py" afterPath="$PROJECT_DIR$/CNNLearner.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/class_learning.py" afterPath="$PROJECT_DIR$/class_learning.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/concat_data_target.py" afterPath="$PROJECT_DIR$/concat_data_target.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data_target.py" afterPath="$PROJECT_DIR$/data_target.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nnet.py" afterPath="$PROJECT_DIR$/nnet.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reg_learning.py" afterPath="$PROJECT_DIR$/reg_learning.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/util.py" afterPath="$PROJECT_DIR$/util.py" />
     </list>
     <ignored path="DeepExpressionLearner.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -34,10 +35,10 @@
       <file leaf-file-name="CNNLearner.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/CNNLearner.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+            <state relative-caret-position="105">
+              <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
               <folding>
-                <element signature="e#24#35#0" expanded="true" />
+                <element signature="e#83#94#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -46,33 +47,19 @@
       <file leaf-file-name="util.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/util.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="711">
-              <caret line="66" column="7" selection-start-line="66" selection-start-column="7" selection-end-line="66" selection-end-column="7" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="data_target.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/data_target.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+            <state relative-caret-position="1380">
+              <caret line="92" column="51" selection-start-line="92" selection-start-column="51" selection-end-line="92" selection-end-column="51" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="spearman.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/spearman.py">
+      <file leaf-file-name="data_target.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/data_target.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="18" column="29" selection-start-line="18" selection-start-column="29" selection-end-line="18" selection-end-column="29" />
-              <folding>
-                <element signature="e#0#19#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="15">
+              <caret line="1" column="60" selection-start-line="1" selection-start-column="60" selection-end-line="1" selection-end-column="60" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -80,10 +67,22 @@
       <file leaf-file-name="nnet.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/nnet.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="420">
-              <caret line="40" column="34" selection-start-line="40" selection-start-column="34" selection-end-line="40" selection-end-column="34" />
+            <state relative-caret-position="285">
+              <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
               <folding>
-                <element signature="e#26#39#0" expanded="true" />
+                <element signature="e#52#65#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NNLearner.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/NNLearner.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="900">
+              <caret line="60" column="89" selection-start-line="60" selection-start-column="89" selection-end-line="60" selection-end-column="89" />
+              <folding>
+                <element signature="e#68#79#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -92,10 +91,22 @@
       <file leaf-file-name="reg_learning.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/reg_learning.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="34" column="0" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
+            <state relative-caret-position="225">
+              <caret line="15" column="24" selection-start-line="15" selection-start-column="24" selection-end-line="15" selection-end-column="24" />
               <folding>
-                <element signature="e#23#41#0" expanded="true" />
+                <element signature="e#101#119#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NNLearner_reg.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/NNLearner_reg.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-90">
+              <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="8" />
+              <folding>
+                <element signature="e#66#77#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -104,22 +115,20 @@
       <file leaf-file-name="class_learning.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/class_learning.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="26" column="14" selection-start-line="26" selection-start-column="14" selection-end-line="26" selection-end-column="14" />
-              <folding>
-                <element signature="e#23#41#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="135">
+              <caret line="9" column="10" selection-start-line="9" selection-start-column="10" selection-end-line="9" selection-end-column="10" />
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="concat_data_target.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="concat_data_target.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/concat_data_target.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="511">
-              <caret line="149" column="0" selection-start-line="149" selection-start-column="0" selection-end-line="149" selection-end-column="0" />
+            <state relative-caret-position="420">
+              <caret line="28" column="41" selection-start-line="28" selection-start-column="41" selection-end-line="28" selection-end-column="41" />
               <folding>
-                <element signature="e#352#363#0" expanded="true" />
+                <element signature="e#176#187#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -147,14 +156,16 @@
         <option value="$PROJECT_DIR$/get_expressions.py" />
         <option value="$PROJECT_DIR$/requirements" />
         <option value="$PROJECT_DIR$/expression_learning.py" />
-        <option value="$PROJECT_DIR$/nnet.py" />
         <option value="$PROJECT_DIR$/spearman.py" />
-        <option value="$PROJECT_DIR$/reg_learning.py" />
-        <option value="$PROJECT_DIR$/concat_data_target.py" />
-        <option value="$PROJECT_DIR$/CNNLearner.py" />
-        <option value="$PROJECT_DIR$/data_target.py" />
-        <option value="$PROJECT_DIR$/class_learning.py" />
+        <option value="$PROJECT_DIR$/NNLearner_reg.py" />
         <option value="$PROJECT_DIR$/util.py" />
+        <option value="$PROJECT_DIR$/data_target.py" />
+        <option value="$PROJECT_DIR$/nnet.py" />
+        <option value="$PROJECT_DIR$/NNLearner.py" />
+        <option value="$PROJECT_DIR$/CNNLearner.py" />
+        <option value="$PROJECT_DIR$/reg_learning.py" />
+        <option value="$PROJECT_DIR$/class_learning.py" />
+        <option value="$PROJECT_DIR$/concat_data_target.py" />
       </list>
     </option>
   </component>
@@ -223,7 +234,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.util">
+  <component name="RunManager" selected="Python.concat_data_target">
     <configuration default="false" name="concat_data_target" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -416,8 +427,8 @@
     </list>
     <recent_temporary>
       <list size="3">
-        <item index="0" class="java.lang.String" itemvalue="Python.util" />
-        <item index="1" class="java.lang.String" itemvalue="Python.concat_data_target" />
+        <item index="0" class="java.lang.String" itemvalue="Python.concat_data_target" />
+        <item index="1" class="java.lang.String" itemvalue="Python.util" />
         <item index="2" class="java.lang.String" itemvalue="Python.spearman" />
       </list>
     </recent_temporary>
@@ -436,6 +447,14 @@
       <option name="presentableId" value="Default" />
       <updated>1487337144948</updated>
     </task>
+    <task id="LOCAL-00001" summary="some changes and unit test">
+      <created>1487778060902</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1487778060902</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -472,6 +491,10 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="some changes and unit test" />
+    <option name="LAST_COMMIT_MESSAGE" value="some changes and unit test" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <option name="time" value="12" />
@@ -484,7 +507,7 @@
         <state relative-caret-position="135">
           <caret line="9" column="16" selection-start-line="9" selection-start-column="6" selection-end-line="9" selection-end-column="16" />
           <folding>
-            <element signature="e#24#35#0" expanded="true" />
+            <element signature="e#83#94#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -494,7 +517,7 @@
         <state relative-caret-position="150">
           <caret line="15" column="21" selection-start-line="15" selection-start-column="21" selection-end-line="29" selection-end-column="0" />
           <folding>
-            <element signature="e#26#39#0" expanded="true" />
+            <element signature="e#52#65#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -504,7 +527,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#34#53#0" expanded="false" />
+            <element signature="e#108#127#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -513,9 +536,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="450">
           <caret line="35" column="16" selection-start-line="19" selection-start-column="39" selection-end-line="35" selection-end-column="16" />
-          <folding>
-            <element signature="e#23#41#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -524,7 +545,7 @@
         <state relative-caret-position="195">
           <caret line="18" column="33" selection-start-line="18" selection-start-column="33" selection-end-line="18" selection-end-column="33" />
           <folding>
-            <element signature="e#352#363#0" expanded="true" />
+            <element signature="e#176#187#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -615,87 +636,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/nnet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="40" column="34" selection-start-line="40" selection-start-column="34" selection-end-line="40" selection-end-column="34" />
-          <folding>
-            <element signature="e#26#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test_data.csv">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/reg_learning.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="34" column="0" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
-          <folding>
-            <element signature="e#23#41#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data.csv">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/target.csv">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="201" column="0" selection-start-line="201" selection-start-column="0" selection-end-line="201" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/CNNLearner.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
-          <folding>
-            <element signature="e#24#35#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/concat_data_target.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="511">
-          <caret line="149" column="0" selection-start-line="149" selection-start-column="0" selection-end-line="149" selection-end-column="0" />
-          <folding>
-            <element signature="e#352#363#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/class_learning.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="26" column="14" selection-start-line="26" selection-start-column="14" selection-end-line="26" selection-end-column="14" />
-          <folding>
-            <element signature="e#23#41#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/util.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="711">
-          <caret line="66" column="7" selection-start-line="66" selection-start-column="7" selection-end-line="66" selection-end-column="7" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -709,11 +654,103 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data_target.py">
+    <entry file="file://$PROJECT_DIR$/data.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-990">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/target.csv">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="315">
-          <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+          <caret line="5001" column="0" selection-start-line="5001" selection-start-column="0" selection-end-line="5001" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/NNLearner_reg.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-90">
+          <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="8" />
+          <folding>
+            <element signature="e#66#77#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1380">
+          <caret line="92" column="51" selection-start-line="92" selection-start-column="51" selection-end-line="92" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_target.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" column="60" selection-start-line="1" selection-start-column="60" selection-end-line="1" selection-end-column="60" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nnet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+          <folding>
+            <element signature="e#52#65#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CNNLearner.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+          <folding>
+            <element signature="e#83#94#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/NNLearner.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="900">
+          <caret line="60" column="89" selection-start-line="60" selection-start-column="89" selection-end-line="60" selection-end-column="89" />
+          <folding>
+            <element signature="e#68#79#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reg_learning.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" column="24" selection-start-line="15" selection-start-column="24" selection-end-line="15" selection-end-column="24" />
+          <folding>
+            <element signature="e#101#119#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/class_learning.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="10" selection-start-line="9" selection-start-column="10" selection-end-line="9" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/concat_data_target.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="28" column="41" selection-start-line="28" selection-start-column="41" selection-end-line="28" selection-end-column="41" />
+          <folding>
+            <element signature="e#176#187#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

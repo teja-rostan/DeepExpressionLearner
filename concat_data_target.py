@@ -1,13 +1,9 @@
 """
 [Prequel program]
-get sequences and their ids (convert from DDB to DDB_G where possible)
+get sequences (from fasta) and their ids (convert from DDB to DDB_G where possible)
 run seq2num
 get expressions
 join sequences with their expressions
-/Users/tejarostan/deepExpressionLearner/promoterSequences/promoter_sequences.fasta
-/Users/tejarostan/deepExpressionLearner/bind_exps/
-/Users/tejarostan/deepExpressionLearner/datatarget/
-\t
 """
 import time
 import sys
@@ -17,12 +13,12 @@ from Bio import SeqIO
 import os
 
 
-def get_seq_and_id(input_fasta_sequences, max_seq_len, delimiter):
+def get_seq_and_id(input_fasta_sequences, max_seq_len):
     """
     Extracts raw sequence strings from fasta input file and their ids to separate dataframes.
-    :param input_fasta_sequences:
-    :param max_seq_len:
-    :return:
+    :param input_fasta_sequences: fatsa file of sequences for learning
+    :param max_seq_len: minimal length of sequences (longer are cut on the left to that length).
+    :return: ids of sequences and sequences
     """
 
     sequences = []
@@ -42,8 +38,14 @@ def get_seq_and_id(input_fasta_sequences, max_seq_len, delimiter):
 
 
 def convert_ids(old_ids, map_txt, conv_type):
-    """ Performs conversion of IDs with the help of DDB-GeneID-UniProt.txt file.
-    The function supports conversion from DDB to DDB_G (conv_type=0) or from DDB_G to DDB (conv_type=1)"""
+    """
+    Performs conversion of IDs with the help of DDB-GeneID-UniProt.txt file.
+    The function supports conversion from DDB to DDB_G (conv_type=0) or from DDB_G to DDB (conv_type=1)
+    :param old_ids:
+    :param map_txt:
+    :param conv_type:
+    :return:
+    """
 
     df = pd.read_csv(map_txt, sep="\t")
     ddb_id = df['DDBDDB ID'].as_matrix()
@@ -74,9 +76,12 @@ def seq2one_hot(data_sequences, data_record_ids, max_len):
     """
     Creates a new matrix where N,A,C,G,T get 0,1,2,3,4 integer values. Sequences are padded on the left with 0 as nan.
     After that the method performs OneHot Encoding.
-    :param data_sequences: pandas dataframe of raw sequences
-    :return: pandas dataframe of onehot encoded sequences
+    :param data_sequences:
+    :param data_record_ids:
+    :param max_len:
+    :return:
     """
+
     print(data_sequences)
     data_sequences.record_sequence = data_sequences.record_sequence.str.replace('A', '0')
     data_sequences.record_sequence = data_sequences.record_sequence.str.replace('C', '1')
@@ -101,8 +106,19 @@ def seq2one_hot(data_sequences, data_record_ids, max_len):
 
 
 def sort_data_and_get_expressions(input_expressions, delimiter, data_record_ids, data_sequences, output_data_target_file, exps_size, times):
-    """ The program matches and concatenates sequences with their expressions.
-    Afterward, the program writes final dataframes in datatarget csv files. """
+    """
+    The program matches and concatenates sequences with their expressions.
+    Afterward, the program writes final dataframes in datatarget csv files.
+    :param input_expressions:
+    :param delimiter:
+    :param data_record_ids:
+    :param data_sequences:
+    :param output_data_target_file:
+    :param exps_size:
+    :param times:
+    :return:
+    """
+
 
     if os.path.isfile(input_expressions):
         bind_exps = ["", ""]
@@ -137,7 +153,7 @@ def sort_data_and_get_expressions(input_expressions, delimiter, data_record_ids,
 def main():
     start = time.time()
     arguments = sys.argv[1:]
-    max_seq_len = 20  # if shorter, remove.
+    max_seq_len = 200  # if shorter, remove.
     map_txt = "DDB2DDB_G/DDB-GeneID-UniProt.txt"
     conv_type = "0"
     times = ['0h', '10h', '12h', '14h', '16h', '18h', '20h', '22h', '24h', '2h', '4h', '6h', '8h']
@@ -154,7 +170,7 @@ def main():
     exps_size = int(arguments[3])
     delimiter = arguments[4]
 
-    data_record_ids, data_sequences = get_seq_and_id(input_fasta_sequences, max_seq_len, delimiter)
+    data_record_ids, data_sequences = get_seq_and_id(input_fasta_sequences, max_seq_len)
     data_record_ids, names = convert_ids(data_record_ids, map_txt, conv_type)
 
     data_sequences, data_record_ids = seq2one_hot(data_sequences, data_record_ids, max_seq_len)

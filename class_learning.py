@@ -1,10 +1,10 @@
 """
-[Main program]
+Main program to run a classification problem with fully densed network or convolutional network.
 """
 import numpy as np
 from sklearn.cross_validation import KFold
 from scipy.stats import spearmanr
-import data_target, CNNLearner
+import data_target, CNNLearner, NNLearner
 import os
 import time
 import sys
@@ -14,8 +14,7 @@ from sklearn.metrics import accuracy_score
 
 def learn_and_score(datatarget_file, delimiter, target_size):
     """
-    Covnolutional Neural network learning and correlation scoring. Learning and predicting one target
-    per time on balanced or unbalanced data.
+    Dense connected or convolution Neural network learning and correlation scoring. Learning and predicting one or multiple targets.
     :param scores_file: The file with data and targets for neural network learning.
     :param delimiter: The delimiter for the scores_file.
     :param target_size: Number of targets in scores_file (the number of columns from the end of scores_file that we want
@@ -24,7 +23,7 @@ def learn_and_score(datatarget_file, delimiter, target_size):
     in learning and testing.
     """
 
-    class_ = 2
+    class_ = 3
     """ Get data and target tables. """
     data, target, target_class, ids, target_names = data_target.get_datatarget(datatarget_file, delimiter, target_size, "class", class_)
 
@@ -32,7 +31,8 @@ def learn_and_score(datatarget_file, delimiter, target_size):
     class_size = class_ * target_size
     n_hidden_n = int(max(data.shape[1], target.shape[1]) * 2 / 3)
 
-    net = CNNLearner.CNNLearner(class_size, n_hidden_n, "class")
+    net = NNLearner.NNLearner(data.shape[1], class_size, 2, n_hidden_n)  # FULLY CONNECTED NEURAL NETWORK
+    # net = CNNLearner.CNNLearner(class_size, n_hidden_n, "class")  # CONVOLUTIONAL NEURAL NETWORK
 
     nn_scores = []
 
@@ -46,7 +46,6 @@ def learn_and_score(datatarget_file, delimiter, target_size):
         trX, teX = data[train_index], data[test_index]
         trY, teY = target[train_index], target[test_index]
 
-        print(trX.shape, trY.shape, teX.shape, teY.shape)
         """ Learning and predicting """
         net.fit(trX, trY)
         prY = net.predict(teX)
@@ -54,9 +53,6 @@ def learn_and_score(datatarget_file, delimiter, target_size):
         maj = majority(trY, teY, class_)
         nn_score, true_p, pred_p = score_ca_and_prob(prY, teY, class_)
         print("Accuracy score of majority:", np.mean(maj), "|Accuracy score of cnn:", np.mean(nn_score))
-        print(pred_p.shape)
-        print(true_p.shape)
-
         nn_scores.append(nn_score)
 
         """ Storing results... """
@@ -74,13 +70,17 @@ def learn_and_score(datatarget_file, delimiter, target_size):
         rhos.append(rho)
         p_values.append(p_value)
     print("Accuracy score of cnn:", np.mean(nn_scores))
-    print(rhos)
     return rhos, p_values, np.around(probs, decimals=2), ids_end, target_names
 
 
 def majority(tr_y, te_y, k):
-    """ Classification accuracy of majority classifier. """
-    # k = 3
+    """
+    Classification accuracy of majority classifier.
+    :param tr_y: training set in one hotformat
+    :param te_y: test set in onehot format
+    :param k: number of classes
+    :return: majority score
+    """
     mc = []
     for i in range(int(tr_y.shape[1] / k)):
         col_train = tr_y[:, i * k:i * k + k]
@@ -97,11 +97,16 @@ def majority(tr_y, te_y, k):
 
 
 def score_ca_and_prob(y_predicted, y_true, k):
-    """ Multi-target scoring with classification accuracy. """
+    """
+    Multi-target scoring with classification accuracy.
+    :param y_predicted: predicted values in onehot format
+    :param y_true: true values in onehot format
+    :param k: number of classes
+    :return: accuracy score, true values, predicted values
+    """
     true_prob = []
     pred_prob = []
     all_ca = []
-    # k = 3
     for i in range(int(y_true.shape[1] / k)):
         col_true = y_true[:, i * k:i * k + k]
         col_predicted = y_predicted[:, i * k:i * k + k]
