@@ -123,16 +123,35 @@ def generate_signal_data(M, N, L, p, motif1, mean1, var1, motif2, mean2, var2, p
     return data, Y, cls
 
 
-
-
-
-
-
-
 if __name__ == "__main__":
 
-    data, y = generate_data(N=5000, L=200, p=0.2, motif1="GGGGGG", mean1=0, var1=1, motif2="AAAAAA", mean2=0.5,
-                            var2=2, priors={"A": 0.25, "C": 0.25, "G": 0.25, "T":0.25})
+    # data, y = generate_data(N=5000, L=200, p=0.2, motif1="GGGGGG", mean1=0, var1=1, motif2="AAAAAA", mean2=0.5,
+    #                         var2=2, priors={"A": 0.25, "C": 0.25, "G": 0.25, "T":0.25})
+    #
+    # print(len(data))
+    # print(y)
+    # f = open('data.csv', 'w')
+    # for i, d in enumerate(data):
+    #     f.write(">DDB_G" + str(i) + '\n')  # python will convert \n to os.linesep
+    #     f.write(d + '\n')
+    #     f.write('\n')
+    # f.close()
+    # f = open('target.csv', 'w')
+    # f.write('ID, val\n')
+    # for i, d in enumerate(y):
+    #     f.write("DDB_G" + str(i) + "," + str(d) + '\n')
+    # f.close()
+
+    # Just for show; delete plotting
+    import matplotlib.pyplot as plt
+
+    motif1 = "GGGGGG"
+    motif2 = "AAAAAA"
+    data, Y, cls = generate_signal_data(M=14, N=5000, L=200, p=0.2, motif1=motif1, mean1=0, var1=1, motif2=motif2, mean2=0.5,
+                            var2=2, priors={"A": 0.25, "C": 0.25, "G": 0.25, "T": 0.25})
+
+    print(Y.shape)
+    print(len(data))
     f = open('data.csv', 'w')
     for i, d in enumerate(data):
         f.write(">DDB_G" + str(i) + '\n')  # python will convert \n to os.linesep
@@ -140,18 +159,13 @@ if __name__ == "__main__":
         f.write('\n')
     f.close()
     f = open('target.csv', 'w')
-    f.write('ID, val\n')
-    for i, d in enumerate(y):
-        f.write("DDB_G" + str(i) + "," + str(d) + '\n')
+    f.write('ID,val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val14\n')
+    for i, d in enumerate(Y):
+        f.write("DDB_G" + str(i))
+        for j in d:
+            f.write("," + str(np.around(j, decimals=2)))
+        f.write("\n")
     f.close()
-
-    # Just for show; delete plotting
-    import matplotlib.pyplot as plt
-
-    motif1 = "GGGGGG"
-    motif2 = "AAAAAA"
-    data, Y, cls = generate_signal_data(M=14, N=30, L=200, p=0.2, motif1=motif1, mean1=0, var1=1, motif2=motif2, mean2=0.5,
-                            var2=2, priors={"A": 0.25, "C": 0.25, "G": 0.25, "T": 0.25})
 
     plt.figure()
     for y, c in zip(Y, cls):

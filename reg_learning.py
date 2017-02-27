@@ -28,9 +28,11 @@ def learn_and_score(datatarget_file, delimiter, target_size):
 
     """ Neural network architecture initialisation. """
     n_hidden_n = int(max(data.shape[1], target.shape[1]) * 2 / 3)
+    n_hidden_l = 2
 
-    # net = CNNLearner.CNNLearner(target_size, n_hidden_n, conv_type="reg")
-    net = NNLearner_reg.NNLearner_reg(data.shape[1], target_size, 2, n_hidden_n)
+    # TODO: choose nn or cnn with parameter and not manually
+    # net = CNNLearner.CNNLearner(target_size, n_hidden_n, conv_type="reg")   # CONVOLUTIONAL NEURAL NETWORK
+    net = NNLearner_reg.NNLearner_reg(data.shape[1], target_size, n_hidden_l, n_hidden_n)  # FULLY CONNECTED NEURAL NETWORK
 
     nn_scores = []
 
@@ -41,9 +43,9 @@ def learn_and_score(datatarget_file, delimiter, target_size):
     skf = KFold(target.shape[0], n_folds=10, shuffle=True)
     idx = 0
     for train_index, test_index in skf:
-        # trX, teX = data, data  # OVERFITTING!!!
+        # trX, teX = data, data  # FOR OVERFITTING!!!
         trX, teX = data[train_index], data[test_index]
-        # trY, teY = target, target  # OVERFITTING!!!
+        # trY, teY = target, target  # FOR OVERFITTING!!!
         trY, teY = target[train_index], target[test_index]
 
         # print(trX.shape, trY.shape, teX.shape, teY.shape)
@@ -54,8 +56,6 @@ def learn_and_score(datatarget_file, delimiter, target_size):
         ms = mean_score(trY, teY)
         nn_score = rmse_score(prY, teY)
         print("RMSE of mean score:", np.mean(ms), "|RMSE of cnn:", np.mean(nn_score))
-        # print(prY)
-        # print(teY)
 
         nn_scores.append(np.mean(nn_score))
 
@@ -63,9 +63,9 @@ def learn_and_score(datatarget_file, delimiter, target_size):
         probs[idx:idx + len(teY), :target_size] = teY
         probs[idx:idx + len(teY), target_size:] = prY
         ids_end[idx:idx+len(teY), 0] = ids[test_index].flatten()
-        # ids_end[idx:idx+len(teY), 0] = ids.flatten()  # OVERFITTING!!!
+        # ids_end[idx:idx+len(teY), 0] = ids.flatten()  # FOR OVERFITTING!!!
         idx += len(teY)
-        # break   # OVERFITTING!!!
+        # break   # FOR OVERFITTING!!!
     rhos = []
     p_values = []
     for i in range(target_size):

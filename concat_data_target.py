@@ -16,9 +16,9 @@ import os
 def get_seq_and_id(input_fasta_sequences, max_seq_len):
     """
     Extracts raw sequence strings from fasta input file and their ids to separate dataframes.
-    :param input_fasta_sequences: fatsa file of sequences for learning
+    :param input_fasta_sequences: fasta file of sequences for learning.
     :param max_seq_len: minimal length of sequences (longer are cut on the left to that length).
-    :return: ids of sequences and sequences
+    :return: dataframe of ids of sequences and dataframe of sequences.
     """
 
     sequences = []
@@ -40,11 +40,11 @@ def get_seq_and_id(input_fasta_sequences, max_seq_len):
 def convert_ids(old_ids, map_txt, conv_type):
     """
     Performs conversion of IDs with the help of DDB-GeneID-UniProt.txt file.
-    The function supports conversion from DDB to DDB_G (conv_type=0) or from DDB_G to DDB (conv_type=1)
-    :param old_ids:
-    :param map_txt:
-    :param conv_type:
-    :return:
+    The function supports conversion from DDB to DDB_G (conv_type=0) or from DDB_G to DDB (conv_type=1).
+    :param old_ids: dataframe of the id names before conversion.
+    :param map_txt: DDB-GeneID-UniProt.txt.
+    :param conv_type: "0" converts from DDB to DDB_G, "1" converts from DDB_G to DDB.
+    :return: dataframe of the id names after conversion.
     """
 
     df = pd.read_csv(map_txt, sep="\t")
@@ -76,13 +76,13 @@ def seq2one_hot(data_sequences, data_record_ids, max_len):
     """
     Creates a new matrix where N,A,C,G,T get 0,1,2,3,4 integer values. Sequences are padded on the left with 0 as nan.
     After that the method performs OneHot Encoding.
-    :param data_sequences:
-    :param data_record_ids:
-    :param max_len:
-    :return:
+    :param data_sequences: dataframes of raw strings of sequences.
+    :param data_record_ids: dataframe of sequences ids.
+    :param max_len: minimum length of a sequence (longer are cut on the left to the maxim_len).
+    :return: dataframe of sequences that are converted to onehot format.
     """
 
-    print(data_sequences)
+    # print(data_sequences)
     data_sequences.record_sequence = data_sequences.record_sequence.str.replace('A', '0')
     data_sequences.record_sequence = data_sequences.record_sequence.str.replace('C', '1')
     data_sequences.record_sequence = data_sequences.record_sequence.str.replace('G', '2')
@@ -109,16 +109,14 @@ def sort_data_and_get_expressions(input_expressions, delimiter, data_record_ids,
     """
     The program matches and concatenates sequences with their expressions.
     Afterward, the program writes final dataframes in datatarget csv files.
-    :param input_expressions:
-    :param delimiter:
-    :param data_record_ids:
-    :param data_sequences:
-    :param output_data_target_file:
-    :param exps_size:
-    :param times:
-    :return:
+    :param input_expressions: a file with expressions or a directory with files of expressions (multiple expressions per sequence).
+    :param delimiter: delimiter of of expression files and a delimiter for a final datatarget file.
+    :param data_record_ids: dataframe of ids of sequences.
+    :param data_sequences: dataframe of sequences.
+    :param output_data_target_file: the path name of a file to write a new datatarget file.
+    :param exps_size: number of expressions in target data.
+    :param times: if there are multiple times of expressions records (starts with 0h and ends with 24h, step is 2h)
     """
-
 
     if os.path.isfile(input_expressions):
         bind_exps = ["", ""]
@@ -153,15 +151,14 @@ def sort_data_and_get_expressions(input_expressions, delimiter, data_record_ids,
 def main():
     start = time.time()
     arguments = sys.argv[1:]
-    max_seq_len = 200  # if shorter, remove.
     map_txt = "DDB2DDB_G/DDB-GeneID-UniProt.txt"
     conv_type = "0"
     times = ['0h', '10h', '12h', '14h', '16h', '18h', '20h', '22h', '24h', '2h', '4h', '6h', '8h']
 
-    if len(arguments) < 5:
+    if len(arguments) < 6:
         print("Not enough arguments stated! Usage: \n"
-              "python concat_data_target.py <input_fasta_sequences> <input_expressions> <output_data_target_file> <expression_size>"
-              "<delimiter>.")
+              "python concat_data_target.py <input_fasta_sequences> <input_expressions> <output_data_target_file> "
+              "<expression_size> <delimiter> <max_seq_len>.")
         return
 
     input_fasta_sequences = arguments[0]
@@ -169,6 +166,7 @@ def main():
     output_data_target_file = arguments[2]
     exps_size = int(arguments[3])
     delimiter = arguments[4]
+    max_seq_len = int(arguments[5])
 
     data_record_ids, data_sequences = get_seq_and_id(input_fasta_sequences, max_seq_len)
     data_record_ids, names = convert_ids(data_record_ids, map_txt, conv_type)

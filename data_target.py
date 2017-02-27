@@ -6,13 +6,14 @@ import numpy as np
 from sklearn.preprocessing import OneHotEncoder
 
 
-def get_datatarget(scores_file, delimiter, target_size, conv_type, class_):
+def get_datatarget(scores_file, delimiter, target_size, nn_type, class_):
     """
     Reads a complete file with pandas, splits to data and target and makes wished preprocessing of the target variables.
     :param scores_file: The file with data and targets for neural network learning.
     :param delimiter: The delimiter for the scores_file.
     :param target_size: Number of columns at the end of scores_file that represent target variables.
     :param nn_type: The type of learning problem for neural networks {class, reg, ord}.
+    :param class_: Number of classes (supported in classification problem).
     :return: data that represent the input of neural network, target that represent the output of neural network,
     raw target expressions and classified target.
     """
@@ -24,15 +25,16 @@ def get_datatarget(scores_file, delimiter, target_size, conv_type, class_):
 
     """ split data and target """
     data = input_matrix[:, :-target_size]
-    # data = data.reshape((-1, 1, 1, data.shape[1]))  #  IF CONVOLUTION!!!
+    data = data.reshape((-1, 1, 1, data.shape[1]))  # TODO: make without manual fix IF CONVOLUTION!!!!!
 
     target = input_matrix[:, -target_size:]
     target_class = 0
     target_names = list(df)[-target_size:]
 
-    if conv_type == "class":
-        # target_class = classification(target, 0.2, 0.8)
-        target_class = classification(target, 0.1, 0.9)  # 10th percentile, decided over analysis on Orange
+    if nn_type == "class":
+        target_class = classification(target, 0.2, 0.8)  # TODO: make without manual fix
+        # target_class = classification(target, 0.1, 0.9)  # 10th percentile, decided over analysis on Orange
+        print(target_class.shape)
         target = one_hot_encoder_target(target_class, class_)
 
     ids = df['ID'].as_matrix()
@@ -52,15 +54,15 @@ def classification(target, down_per, up_per):
     for i, expression in enumerate(target.T):
         new_expression = np.ones(expression.shape)
 
-        # IF USING PERCENTIL FOR CLASSIFICATION
-        down_10 = np.percentile(expression, down_per * 100)
-        up_10 = np.percentile(expression, up_per * 100)
-        new_expression -= (expression <= down_10)
-        new_expression += (expression >= up_10)
+        # IF USING PERCENTIL FOR CLASSIFICATION  # TODO: make without manual fix
+        # down_10 = np.percentile(expression, down_per * 100)
+        # up_10 = np.percentile(expression, up_per * 100)
+        # new_expression -= (expression <= down_10)
+        # new_expression += (expression >= up_10)
 
-        # IF USING THRESHOLD [0, 1] FOR CLASSIFICATION
-        # new_expression -= (expression < down_per)
-        # new_expression += (expression > up_per)
+        # IF USING THRESHOLD [0, 1] FOR CLASSIFICATION  # TODO: make without manual fix
+        new_expression -= (expression < down_per)
+        new_expression += (expression > up_per)
 
         new_target[:, i] = new_expression
     return new_target
@@ -75,9 +77,15 @@ def one_hot_encoder_target(y, k):
     """
 
     new_y = np.zeros((y.shape[0], y.shape[1] * k))
-    for i in range(y.shape[1]):
-        col = y[:, i]
-        enc = OneHotEncoder(sparse=False)
-        one_hot = enc.fit_transform(col.reshape(-1, 1))
-        new_y[:, i * k:i * k + k] = one_hot
+    # for i in range(y.shape[1]):
+    #     col = y[:, i]
+    #     enc = OneHotEncoder(sparse=False)
+    #     one_hot = enc.fit_transform(col.reshape(-1, 1))
+    #     new_y[:, i * k:i * k + k] = one_hot
+
+    for i, s in enumerate(y):
+        new_row = np.array(list(s)).astype(np.int)
+        b = np.zeros((new_row.size, 3))
+        b[np.arange(new_row.size), new_row] = 1
+        new_y[i] = b.flatten()
     return new_y

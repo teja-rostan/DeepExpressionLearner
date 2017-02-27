@@ -12,7 +12,7 @@ import pandas as pd
 from sklearn.metrics import accuracy_score
 
 
-def learn_and_score(datatarget_file, delimiter, target_size):
+def learn_and_score(datatarget_file, delimiter, target_size, architecture="3c2f"):
     """
     Dense connected or convolution Neural network learning and correlation scoring. Learning and predicting one or multiple targets.
     :param scores_file: The file with data and targets for neural network learning.
@@ -26,13 +26,16 @@ def learn_and_score(datatarget_file, delimiter, target_size):
     class_ = 3
     """ Get data and target tables. """
     data, target, target_class, ids, target_names = data_target.get_datatarget(datatarget_file, delimiter, target_size, "class", class_)
+    print(data.shape, target.shape)
 
     """ Neural network architecture initialisation. """
     class_size = class_ * target_size
     n_hidden_n = int(max(data.shape[1], target.shape[1]) * 2 / 3)
+    n_hidden_l = 4
 
-    net = NNLearner.NNLearner(data.shape[1], class_size, 2, n_hidden_n)  # FULLY CONNECTED NEURAL NETWORK
-    # net = CNNLearner.CNNLearner(class_size, n_hidden_n, "class")  # CONVOLUTIONAL NEURAL NETWORK
+    # TODO: choose nn or cnn with parameter and not manually
+    # net = NNLearner.NNLearner(data.shape[1], class_size, n_hidden_l, n_hidden_n)  # FULLY CONNECTED NEURAL NETWORK
+    net = CNNLearner.CNNLearner(class_size, n_hidden_n, "class", architecture=architecture)  # CONVOLUTIONAL NEURAL NETWORK
 
     nn_scores = []
 
@@ -76,10 +79,10 @@ def learn_and_score(datatarget_file, delimiter, target_size):
 def majority(tr_y, te_y, k):
     """
     Classification accuracy of majority classifier.
-    :param tr_y: training set in one hotformat
-    :param te_y: test set in onehot format
-    :param k: number of classes
-    :return: majority score
+    :param tr_y: training set in one hotformat.
+    :param te_y: test set in onehot format.
+    :param k: number of classes.
+    :return: majority score.
     """
     mc = []
     for i in range(int(tr_y.shape[1] / k)):
@@ -99,10 +102,10 @@ def majority(tr_y, te_y, k):
 def score_ca_and_prob(y_predicted, y_true, k):
     """
     Multi-target scoring with classification accuracy.
-    :param y_predicted: predicted values in onehot format
-    :param y_true: true values in onehot format
-    :param k: number of classes
-    :return: accuracy score, true values, predicted values
+    :param y_predicted: predicted values in onehot format.
+    :param y_true: true values in onehot format.
+    :param k: number of classes.
+    :return: accuracy score, true values, predicted values.
     """
     true_prob = []
     pred_prob = []
@@ -124,11 +127,16 @@ def score_ca_and_prob(y_predicted, y_true, k):
 
 def main():
     start = time.time()
+    architecture = "3c2f"
     arguments = sys.argv[1:]
 
     if len(arguments) < 5:
         print("Error: Not enough arguments stated! Usage: \n"
-              "python class_learning.py <datatarget_dir> <output_dir> <name> <delimiter> <target_size>")
+              "python class_learning.py <datatarget_dir> <output_dir> <name> <delimiter> <target_size> "
+              "<architecture>,\nwhere architecture is:\n"
+              "3c2f: 3 conv layels and 2 fully connected layers (default)\n"
+              "2c1f: 2 conv layers and 1 fully connected layer\n"
+              "1c2f: 1 conv layer and 2 fully connected layers.")
         sys.exit(0)
 
     datatarget_dir = arguments[0]
@@ -136,6 +144,8 @@ def main():
     name = arguments[2]
     delimiter = arguments[3]
     target_size = int(arguments[4])
+    if len(arguments) == 6:
+        architecture = arguments[5]
 
     nn_scores = []
     col_names = []
@@ -151,7 +161,7 @@ def main():
             col_names.append(row[:-4])
             print(datatarget_file)
 
-            rhos, p_values, probs, ids, target_names = learn_and_score(datatarget_file, delimiter, target_size)
+            rhos, p_values, probs, ids, target_names = learn_and_score(datatarget_file, delimiter, target_size, architecture=architecture)
             corr_scores.append(rhos)
             corr_scores.append(p_values)
             nn_scores.append(np.hstack([probs, ids]))
