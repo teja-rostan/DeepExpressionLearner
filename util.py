@@ -159,7 +159,7 @@ if __name__ == "__main__":
         f.write('\n')
     f.close()
     f = open('target.csv', 'w')
-    f.write('ID,val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val14\n')
+    f.write('ID,val1,val2,val3,val4,val5,val6,val7,val8,val9,val10,val11,val12,val13,val14\n')  # columns of an ID and targets
     for i, d in enumerate(Y):
         f.write("DDB_G" + str(i))
         for j in d:

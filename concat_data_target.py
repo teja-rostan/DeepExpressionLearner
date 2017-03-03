@@ -1,10 +1,13 @@
 """
-[Prequel program]
-get sequences (from fasta) and their ids (convert from DDB to DDB_G where possible)
-run seq2num
-get expressions
-join sequences with their expressions
+A program for changing the data file and the target file to a new file that is an input file for neural network learning.
+
+Usage:
+python concat_data_target.py <input_fasta_sequences> <input_expressions> <output_data_target_file> <expression_size> <delimiter> <max_seq_len>.
+
+Example of usage:
+python concat_data_target.py my_data/data.csv my_data/target.csv my_new_data/ 14 , 200
 """
+
 import time
 import sys
 import numpy as np

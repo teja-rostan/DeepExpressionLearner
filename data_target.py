@@ -1,12 +1,12 @@
 """
-A program for data and target retrieving in right format for class_learning.py or a reg_learning.py
+A program for data and target retrieving in right format used by class_learning.py and reg_learning.py
 """
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder
 
 
-def get_datatarget(scores_file, delimiter, target_size, nn_type, class_):
+def get_datatarget(scores_file, delimiter, target_size, problem_type, class_, nn_type):
     """
     Reads a complete file with pandas, splits to data and target and makes wished preprocessing of the target variables.
     :param scores_file: The file with data and targets for neural network learning.
@@ -25,15 +25,21 @@ def get_datatarget(scores_file, delimiter, target_size, nn_type, class_):
 
     """ split data and target """
     data = input_matrix[:, :-target_size]
-    data = data.reshape((-1, 1, 1, data.shape[1]))  # TODO: make without manual fix IF CONVOLUTION!!!!!
+
+    if nn_type == "cnn":
+        data = data.reshape((-1, 1, 1, data.shape[1]))
 
     target = input_matrix[:, -target_size:]
     target_class = 0
     target_names = list(df)[-target_size:]
 
-    if nn_type == "class":
-        target_class = classification(target, 0.2, 0.8)  # TODO: make without manual fix
-        # target_class = classification(target, 0.1, 0.9)  # 10th percentile, decided over analysis on Orange
+    if problem_type == "class":
+        """ Classify raw expression with percentil thresholds or raw value thresholds"""
+
+        # TODO: make without manual fix
+        target_class = classification(target, 0.2, 0.8)  # raw value thresshold
+        # target_class = classification(target, 0.1, 0.9)  # percentile threshold
+
         print(target_class.shape)
         target = one_hot_encoder_target(target_class, class_)
 
@@ -54,13 +60,13 @@ def classification(target, down_per, up_per):
     for i, expression in enumerate(target.T):
         new_expression = np.ones(expression.shape)
 
-        # IF USING PERCENTIL FOR CLASSIFICATION  # TODO: make without manual fix
+        # IF USING PERCENTIL THRESHOLD FOR CLASSIFICATION  # TODO: make without manual fix
         # down_10 = np.percentile(expression, down_per * 100)
         # up_10 = np.percentile(expression, up_per * 100)
         # new_expression -= (expression <= down_10)
         # new_expression += (expression >= up_10)
 
-        # IF USING THRESHOLD [0, 1] FOR CLASSIFICATION  # TODO: make without manual fix
+        # IF USING RAW VALUE THRESHOLD [0, 1] FOR CLASSIFICATION  # TODO: make without manual fix
         new_expression -= (expression < down_per)
         new_expression += (expression > up_per)
 

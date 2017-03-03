@@ -1,17 +1,16 @@
+"""
+Program for plotting correlation results at input_directory_path.
+
+Usage:
+python plot_rhos.py <input_directory_path> <delimiter>.
+"""
+
 import time
 import sys
 import numpy as np
 import pandas as pd
 import os
 from matplotlib import pyplot as plt
-
-help = \
-    """
-    Program for plotting correlation results at input_directory_path.
-
-    Usage:
-        python plot_rhos.py <input_directory_path> <delimiter>.
-"""
 
 
 def main():

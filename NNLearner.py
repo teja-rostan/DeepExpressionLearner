@@ -1,6 +1,7 @@
 """
-    Artificial neural network with 2, 3 or 4 hidden layers.
+Artificial neural network with 2, 3 or 4 hidden layers.
 """
+
 import nnet
 import numpy as np
 import theano
@@ -9,15 +10,15 @@ from theano import tensor as T
 
 class NNLearner:
 
-    def __init__(self, attribute_size, class_size, n_hidden_layers=2, n_hidden_neurons=30):
+    def __init__(self, attribute_size, class_size, n_hidden_layers, n_hidden_neurons=30):
         """
         Initialization of Classification neural network.
         :param attribute_size: Number of input attributes for neural network.
         :param class_size: Number of output classes for neural network.
         :param n_hidden_layers: Number of hidden layers in neural network architecture.
         :param n_hidden_neurons: Number of hidden neurons in every hidden layer in neural network architecture.
-
         """
+
         self.n_hidden_layers = n_hidden_layers
         self.class_size = class_size
         self.n_hidden_neurons = n_hidden_neurons
@@ -76,8 +77,8 @@ class NNLearner:
         Neural Network learning.
         :param trX: Input data for training (train X).
         :param trY: Output data for training (train y).
-
         """
+
         for i in range(100):
             shuffle = np.random.permutation(len(trY))
             trYs = trY[shuffle]
@@ -91,6 +92,7 @@ class NNLearner:
         :param teX: Input data for predicting (test X).
         :return: Predictions.
         """
+
         prY = self.predict_(teX)
         # prY = np.argmax(prY, axis=1)
 

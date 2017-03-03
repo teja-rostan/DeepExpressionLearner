@@ -1,5 +1,5 @@
 """
-Main program to run a regression problem with fully densed network or convolutional network.
+Main program to run a regression problem with fully connected neural network or convolutional neural network.
 """
 import numpy as np
 from sklearn.cross_validation import KFold
@@ -11,7 +11,7 @@ import sys
 import pandas as pd
 
 
-def learn_and_score(datatarget_file, delimiter, target_size):
+def learn_and_score(datatarget_file, delimiter, target_size, nn_type, architecture):
     """
     Dense connected or covnolutional Neural network learning and correlation scoring. Learning and predicting one target
     per time on balanced or unbalanced data.
@@ -28,12 +28,17 @@ def learn_and_score(datatarget_file, delimiter, target_size):
 
     """ Neural network architecture initialisation. """
     n_hidden_n = int(max(data.shape[1], target.shape[1]) * 2 / 3)
-    n_hidden_l = 2
 
-    # TODO: choose nn or cnn with parameter and not manually
-    # net = CNNLearner.CNNLearner(target_size, n_hidden_n, conv_type="reg")   # CONVOLUTIONAL NEURAL NETWORK
-    net = NNLearner_reg.NNLearner_reg(data.shape[1], target_size, n_hidden_l, n_hidden_n)  # FULLY CONNECTED NEURAL NETWORK
+    if nn_type == 'cnn':
+        if architecture == "0":
+            architecture = "3c2f"
+        net = CNNLearner.CNNLearner(target_size, architecture, n_hidden_n, "class")
 
+    elif nn_type == 'nn':
+        architecture = int(architecture)
+        if architecture == 0:
+            architecture = 3
+        net = NNLearner_reg.NNLearner_reg(data.shape[1], target_size, architecture, n_hidden_n)
     nn_scores = []
 
     probs = np.zeros((target.shape[0], target_size*2))
@@ -98,11 +103,19 @@ def mean_score(tr_y, te_y):
 
 def main():
     start = time.time()
+    architecture = "0"
     arguments = sys.argv[1:]
 
-    if len(arguments) < 5:
+    if len(arguments) < 6:
         print("Error: Not enough arguments stated! Usage: \n"
-              "python class_learning.py <datatarget_dir> <output_dir> <name> <delimiter> <target_size>")
+              "python reg_learning.py <datatarget_dir> <output_dir> <name> <delimiter> <target_size> <network_type>"
+              " <architecture>,\nwhere network_type is:\n - 'nn' (fully connected network)\n - 'cnn' "
+              "(convolutional neural network), \nwhere architecture is:\n - in case of nn_type='cnn':\n"
+              "   *  '3c2f': 3 conv layers and 2 fully connected layers (default)\n"
+              "   *  '2c1f': 2 conv layers and 1 fully connected layer\n"
+              "   *  '1c2f': 1 conv layer and 2 fully connected layers."
+              "\n - in case of nn_type='nn':\n"
+              "   *  integer > 0 representing the number of hidden layers (default=3).")
         sys.exit(0)
 
     datatarget_dir = arguments[0]
@@ -110,6 +123,9 @@ def main():
     name = arguments[2]
     delimiter = arguments[3]
     target_size = int(arguments[4])
+    nn_type = arguments[5]
+    if len(arguments) == 5:
+        architecture = arguments[6]
 
     nn_scores = []
     col_names = []
@@ -123,7 +139,8 @@ def main():
             col_names.append(row[:-4])
             print(datatarget_file)
 
-            rhos, p_values, probs, ids, target_names = learn_and_score(datatarget_file, delimiter, target_size)
+            rhos, p_values, probs, ids, target_names = learn_and_score(datatarget_file, delimiter, target_size, nn_type,
+                                                                       architecture)
             corr_scores.append(rhos)
             corr_scores.append(p_values)
             nn_scores.append(np.hstack([probs, ids]))

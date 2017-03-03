@@ -1,6 +1,26 @@
 """
-Main program to run a classification problem with fully densed network or convolutional network.
+A program to run a classification problem with fully connected neural network or convolutional neural network.
+
+Usage:
+python class_learning.py <datatarget_dir> <output_dir> <name> <delimiter> <target_size> <network_type> <architecture>,
+where network_type is:
+ - 'nn' (fully connected network)
+ - 'cnn' (convolutional neural network),
+where architecture is:
+ - in case of nn_type='cnn':
+    *  '3c2f': 3 conv layers and 2 fully connected layers (default)
+    *  '2c1f': 2 conv layers and 1 fully connected layer
+    *  '1c2f': 1 conv layer and 2 fully connected layers
+ - in case of nn_type='nn':
+    *  integer > 0 representing the number of hidden layers (default=3).
+
+Examples of usage:
+THEANO_FLAGS='floatX=float32,device=gpu2,lib.cnmem=1' python code/class_learning.py datatarget/ results/ 'test_cnn_2c1f' , 14 cnn 2c1f
+THEANO_FLAGS='floatX=float32,device=gpu2,lib.cnmem=1' python code/class_learning.py datatarget/ results/ 'test_cnn_3c2f' , 14 cnn
+THEANO_FLAGS='floatX=float32,device=gpu2,lib.cnmem=1' python code/class_learning.py datatarget/ results/ 'test_nn_3' , 14 nn
+THEANO_FLAGS='floatX=float32,device=gpu2,lib.cnmem=1' python code/class_learning.py datatarget/ results/ 'test_nn_4' , 14 nn 4
 """
+
 import numpy as np
 from sklearn.cross_validation import KFold
 from scipy.stats import spearmanr
@@ -12,30 +32,38 @@ import pandas as pd
 from sklearn.metrics import accuracy_score
 
 
-def learn_and_score(datatarget_file, delimiter, target_size, architecture="3c2f"):
+def learn_and_score(datatarget_file, delimiter, target_size, nn_type, architecture):
     """
     Dense connected or convolution Neural network learning and correlation scoring. Learning and predicting one or multiple targets.
     :param scores_file: The file with data and targets for neural network learning.
     :param delimiter: The delimiter for the scores_file.
     :param target_size: Number of targets in scores_file (the number of columns from the end of scores_file that we want
     to extract and double).
+    :param nn_type: network type: 'cnn' if convolutional neural network or 'nn' if fully connected neural network.
+    :param architecture: description of 'cnn' ('3c2f', '2c1f', '1c2f') or number of hidden layers in 'nn'.
     :return: rhos and p-values of relative Spearman correlation, predictions and ids of instances that were included
     in learning and testing.
     """
 
-    class_ = 3
+    class_ = 3  # negative expression, no expression, positive expression
     """ Get data and target tables. """
-    data, target, target_class, ids, target_names = data_target.get_datatarget(datatarget_file, delimiter, target_size, "class", class_)
+    data, target, target_class, ids, target_names = data_target.get_datatarget(datatarget_file, delimiter, target_size, "class", class_, nn_type)
     print(data.shape, target.shape)
 
     """ Neural network architecture initialisation. """
     class_size = class_ * target_size
     n_hidden_n = int(max(data.shape[1], target.shape[1]) * 2 / 3)
-    n_hidden_l = 4
 
-    # TODO: choose nn or cnn with parameter and not manually
-    # net = NNLearner.NNLearner(data.shape[1], class_size, n_hidden_l, n_hidden_n)  # FULLY CONNECTED NEURAL NETWORK
-    net = CNNLearner.CNNLearner(class_size, n_hidden_n, "class", architecture=architecture)  # CONVOLUTIONAL NEURAL NETWORK
+    if nn_type == 'cnn':
+        if architecture == "0":
+            architecture = "3c2f"
+        net = CNNLearner.CNNLearner(class_size, architecture, n_hidden_n, "class")
+
+    elif nn_type == 'nn':
+        architecture = int(architecture)
+        if architecture == 0:
+            architecture = 3
+        net = NNLearner.NNLearner(data.shape[1], class_size, architecture, n_hidden_n)
 
     nn_scores = []
 
@@ -127,16 +155,19 @@ def score_ca_and_prob(y_predicted, y_true, k):
 
 def main():
     start = time.time()
-    architecture = "3c2f"
+    architecture = "0"
     arguments = sys.argv[1:]
 
-    if len(arguments) < 5:
+    if len(arguments) < 6:
         print("Error: Not enough arguments stated! Usage: \n"
-              "python class_learning.py <datatarget_dir> <output_dir> <name> <delimiter> <target_size> "
-              "<architecture>,\nwhere architecture is:\n"
-              "3c2f: 3 conv layels and 2 fully connected layers (default)\n"
-              "2c1f: 2 conv layers and 1 fully connected layer\n"
-              "1c2f: 1 conv layer and 2 fully connected layers.")
+              "python class_learning.py <datatarget_dir> <output_dir> <name> <delimiter> <target_size> <network_type>"
+              " <architecture>,\nwhere network_type is:\n - 'nn' (fully connected network)\n - 'cnn' "
+              "(convolutional neural network), \nwhere architecture is:\n - in case of nn_type='cnn':\n"
+              "   *  '3c2f': 3 conv layers and 2 fully connected layers (default)\n"
+              "   *  '2c1f': 2 conv layers and 1 fully connected layer\n"
+              "   *  '1c2f': 1 conv layer and 2 fully connected layers."
+              "\n - in case of nn_type='nn':\n"
+              "   *  integer > 0 representing the number of hidden layers (default=3).")
         sys.exit(0)
 
     datatarget_dir = arguments[0]
@@ -144,8 +175,9 @@ def main():
     name = arguments[2]
     delimiter = arguments[3]
     target_size = int(arguments[4])
-    if len(arguments) == 6:
-        architecture = arguments[5]
+    nn_type = arguments[5]
+    if len(arguments) == 5:
+        architecture = arguments[6]
 
     nn_scores = []
     col_names = []
@@ -161,7 +193,8 @@ def main():
             col_names.append(row[:-4])
             print(datatarget_file)
 
-            rhos, p_values, probs, ids, target_names = learn_and_score(datatarget_file, delimiter, target_size, architecture=architecture)
+            rhos, p_values, probs, ids, target_names = learn_and_score(datatarget_file, delimiter, target_size, nn_type,
+                                                                       architecture)
             corr_scores.append(rhos)
             corr_scores.append(p_values)
             nn_scores.append(np.hstack([probs, ids]))

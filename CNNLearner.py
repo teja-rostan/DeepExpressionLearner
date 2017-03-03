@@ -1,6 +1,7 @@
 """
-Convolutional neural network model (3 different architectures introduced).
+Convolutional neural network model (3 different architectures introduced: '3c2f', '2c1f', '1c2f').
 """
+
 import nnet
 import numpy as np
 import theano
@@ -9,7 +10,7 @@ from theano import tensor as T
 
 class CNNLearner:
 
-    def __init__(self, class_size, n_hidden_neurons=30, conv_type="class", architecture="3c2f"):
+    def __init__(self, class_size, architecture, n_hidden_neurons=30, conv_type="class"):
         """
         Initialization of Classification neural network.
         :param class_size: Number of output classes for neural network.
@@ -17,6 +18,7 @@ class CNNLearner:
         :param conv_type: "class" for classification and "reg" for regression.
         :param architecture: architecture of neural network (supported in classification problem).
         """
+
         self.class_size = class_size
         self.n_hidden_neurons = n_hidden_neurons
 
@@ -80,6 +82,13 @@ class CNNLearner:
             trXs = trX[shuffle]
             for start, end in zip(range(0, len(trX), 32), range(32, len(trX), 32)):
                 cost = self.train(trXs[start:end], trYs[start:end])
+
+    def get_motifs(self):
+        """
+        Return motifs from first convolutional layer
+        :return: motifs from first convolutional layer
+        """
+        return self.w_h.get_value()
 
     def predict(self, teX):
         """
