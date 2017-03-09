@@ -1,14 +1,14 @@
 # DeepExpressionLearner
 
-The code enables learning of the convolutional neural network with the input of the sequences of an organism and with the output of their expressions.  
-  When the convolutional neural network learns on the instances of sequences and corresponding expressions, learns the motifs. The code therefore provides learning 
-  a deep convolutional neural network with sequences and their expressions to retrieve the motifs. 
+The code enables learning of the convolutional neural network with the input of the sequences of an organism and with the output of their expressions. 
+When the convolutional neural network learns on the instances of sequences and corresponding expressions, learns the motifs. The code therefore provides learning 
+a deep convolutional neural network with sequences and their expressions to retrieve the motifs. 
 
 ## Example in practice
-The example represents the whole procedure, from generating the sequences and expressions to learning the neural network that predicts these expressions  
- (negative expression, no expression or positive expression). In the example we also plot the results of multiple neural network models.  
- Finally, we choose the architectures of the convolutional neural network that we are satisfied with and fit the model with the whole set of data  
- (no splitting for learning and testing) and retrieve the motifs.  
+The example represents the whole procedure, from generating the sequences and expressions to learning the neural network that predicts these expressions
+(negative expression, no expression or positive expression). In the example we also plot the results of multiple neural network models.
+Finally, we choose the architectures of the convolutional neural network that we are satisfied with and fit the model with the whole set of data
+(no splitting for learning and testing) and retrieve the motifs.  
    
 ### Generate an example of data and target files for learning   
 Returns two generated files, one is a data file of sequences (in fasta format) and the second is a target file with expressions.   
@@ -27,8 +27,8 @@ generate_signal_data(M=14, N=5000, L=200, p=0.2, motif1=motif1, mean1=0, var1=1,
   
   
 ### Get data and target in right format for learning  
-The files input_fasta_sequences and input_expressions generated with util.py can be the input files for concat_data_target.py (or your own fasta file and expressions file).  
-The program returns a single file where the sequences that can be matched with expressions are one-hot encoded. Sequences are concatenated with expressions.  
+The files input_fasta_sequences and input_expressions generated with util.py can be the input files for concat_data_target.py (or your own fasta file and expressions file).
+The program returns a single file where the sequences that can be matched with expressions are one-hot encoded. Sequences are concatenated with expressions.
 The output file is meant as an input file to a class_learning.py program (the datatarget file in datatarget_dir (look below)).  
   
 #### Usage:   
@@ -38,31 +38,30 @@ python concat_data_target.py <input_fasta_sequences> <input_expressions> <output
 python concat_data_target.py my_data/data.fasta my_data/target.csv my_new_data/ 14 , 200  
   
 ### Classification learning with neural network  
-The program needs a datatarget_dir with files of datatargets to get the data columns and target columns (target columns are classified to three classes).   
-The program then learns a neural network model with 10-fold cross validation (during learning and predicting the program prints out the classification accuracy  
-of a neural network and of a majority classifier for a reference).  
-Afterward, the relative spearman correlation is calculated. The results of correlation are written at the output_dir that starts with spearman_....   
-Another file probs_... is written at output_dir that contains the true classes along side with the predicted classes.  
+The program needs a datatarget_dir with files of datatargets to get the data columns and target columns (target columns are classified to three classes). 
+The program then learns a neural network model with 10-fold cross validation (during learning and predicting the program prints out the classification accuracy
+of a neural network and of a majority classifier for a reference).
+Afterward, the relative spearman correlation is calculated. The results of correlation are written at the output_dir that starts with spearman_....
+Another file probs_... is written at output_dir that contains the true classes along side with the predicted classes.
   
 #### Usage:  
 python class_learning.py <datatarget_dir> <output_dir> <name> <delimiter> <target_size> <network_type> <architecture>,  
-where network_type is:  
- - 'nn' (fully connected network)  
- - 'cnn' (convolutional neural network),  
-where architecture is:  
- - in case of nn_type='cnn':  
-    *  '3c2f': 3 conv layers and 2 fully connected layers (default)  
-    *  '2c1f': 2 conv layers and 1 fully connected layer  
-    *  '1c2f': 1 conv layer and 2 fully connected layers  
- - in case of nn_type='nn':  
+where network_type is:
+ - 'nn' (fully connected network)
+ - 'cnn' (convolutional neural network),
+where architecture is:
+ - in case of nn_type='cnn':
+    *  '3c2f': 3 conv layers and 2 fully connected layers (default)
+    *  '2c1f': 2 conv layers and 1 fully connected layer
+    *  '1c2f': 1 conv layer and 2 fully connected layers
+ - in case of nn_type='nn':
     *  integer > 0 representing the number of hidden layers (default=3).  
     
 #### Examples of usage:  
-
-THEANO_FLAGS='floatX=float32,device=gpu2,lib.cnmem=1' python code/class_learning.py datatarget/ results/ 'test_class_cnn_2c1f' , 14 cnn 2c1f  
-THEANO_FLAGS='floatX=float32,device=gpu2,lib.cnmem=1' python code/class_learning.py datatarget/ results/ 'test_class_cnn_3c2f' , 14 cnn  
-THEANO_FLAGS='floatX=float32,device=gpu2,lib.cnmem=1' python code/class_learning.py datatarget/ results/ 'test_class_nn_3' , 14 nn  
-THEANO_FLAGS='floatX=float32,device=gpu2,lib.cnmem=1' python code/class_learning.py datatarget/ results/ 'test_class_nn_4' , 14 nn 4  
+ - THEANO_FLAGS='floatX=float32,device=gpu2,lib.cnmem=1' python code/class_learning.py datatarget/ results/ 'test_class_cnn_2c1f' , 14 cnn 2c1f  
+ - THEANO_FLAGS='floatX=float32,device=gpu2,lib.cnmem=1' python code/class_learning.py datatarget/ results/ 'test_class_cnn_3c2f' , 14 cnn  
+ - THEANO_FLAGS='floatX=float32,device=gpu2,lib.cnmem=1' python code/class_learning.py datatarget/ results/ 'test_class_nn_3' , 14 nn  
+ - THEANO_FLAGS='floatX=float32,device=gpu2,lib.cnmem=1' python code/class_learning.py datatarget/ results/ 'test_class_nn_4' , 14 nn 4  
   
   
 ### Plot all correlation results at input_directory_path.  
@@ -78,12 +77,11 @@ For the plotted results that we are satisfied, we retrieve the motifs with this 
 #### Usage:  
 python class_learning.py <datatarget_dir> <output_dir> <name> <delimiter> <target_size> <network_type> <architecture>,  
 where architecture is:  
-    *  '3c2f': 3 conv layers and 2 fully connected layers (default)  
-    *  '2c1f': 2 conv layers and 1 fully connected layer  
-    *  '1c2f': 1 conv layer and 2 fully connected layers  
+   -  '3c2f': 3 conv layers and 2 fully connected layers (default)  
+   -  '2c1f': 2 conv layers and 1 fully connected layer  
+   -  '1c2f': 1 conv layer and 2 fully connected layers  
   
 #### Examples of usage:  
-  
-THEANO_FLAGS='floatX=float32,device=gpu2,lib.cnmem=1' python code/get_motifs.py datatarget/ results/ 'test_class_cnn_2c1f' , 14 2c1f  
-THEANO_FLAGS='floatX=float32,device=gpu2,lib.cnmem=1' python code/get_motifs.py datatarget/ results/ 'test_class_cnn_3c2f' , 14  
+ - THEANO_FLAGS='floatX=float32,device=gpu2,lib.cnmem=1' python code/get_motifs.py datatarget/ results/ 'test_class_cnn_2c1f' , 14 2c1f  
+ - THEANO_FLAGS='floatX=float32,device=gpu2,lib.cnmem=1' python code/get_motifs.py datatarget/ results/ 'test_class_cnn_3c2f' , 14  
   
