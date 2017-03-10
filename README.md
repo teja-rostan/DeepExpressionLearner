@@ -1,13 +1,13 @@
 # DeepExpressionLearner
 
-The code enables learning of the convolutional neural network with the input of the sequences of an organism and with the output of their expressions. 
-When the convolutional neural network learns on the instances of sequences and corresponding expressions, learns the motifs. The code therefore provides learning 
-a deep convolutional neural network with sequences and their expressions to retrieve the motifs. 
+The code enables learning of the convolutional neural network where the input are the sequences of an organism and at the output are the corresponding expressions. 
+When the convolutional neural network learns on the instances of sequences and expressions, learns the motifs. The code therefore provides the learning 
+of a deep convolutional neural network with sequences and their expressions to retrieve the motifs. 
 
 ## Example in practice
 The example represents the whole procedure, from generating the sequences and expressions to learning the neural network that predicts these expressions
 (negative expression, no expression or positive expression). In the example we also plot the results of multiple neural network models.
-Finally, we choose the architectures of the convolutional neural network that we are satisfied with and fit the model with the whole set of data
+Finally, we fit the preferred model with the whole set of data
 (no splitting for learning and testing) and retrieve the motifs.  
    
 ### Generate an example of data and target files for learning   
