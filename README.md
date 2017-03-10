@@ -1,6 +1,6 @@
 # DeepExpressionLearner
 
-The code enables learning of the convolutional neural network where the input are the sequences of an organism and at the output are the corresponding expressions. 
+The code enables learning of the convolutional neural network. At the input are the sequences of an organism and at the output are the corresponding expressions. 
 When the convolutional neural network learns on the instances of sequences and expressions, learns the motifs. The code therefore provides the learning 
 of a deep convolutional neural network with sequences and their expressions to retrieve the motifs. 
 
